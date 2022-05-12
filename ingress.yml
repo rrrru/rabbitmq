@@ -14,7 +14,7 @@ spec:
       paths:
       - backend:
           service:
-            name: rabbitmqcluster
+            name: production-rabbitmqcluster
             port:
               number: 15672
         path: /
