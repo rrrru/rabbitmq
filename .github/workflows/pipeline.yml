@@ -1,0 +1,26 @@
+name: pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  tasks:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_TOKEN }}
+
+      - name: Kubernetes actions
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: |
+          doctl kubernetes cluster kubeconfig save ${{ secrets.DO_CLUSTER_NAME }}
+          kubectl version
+          helm upgrade -i rabbitmq-cluster-operator bitnami/rabbitmq-cluster-operator --create-namespace
+          kubectl create ns ${{ secrets.K8S_NAMESPACE }} || true
+          kubectl apply -f rabbitmq-cluster.yml -n ${{ secrets.K8S_NAMESPACE }}
+          kubectl apply -f ingress.yml -n ${{ secrets.K8S_NAMESPACE }}

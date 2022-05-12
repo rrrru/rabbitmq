@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/acme-challenge-type: dns01
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  name: rabbit-managment-ui
+spec:
+  rules:
+  - host: r.k8s-do.exmple.live
+    http:
+      paths:
+      - backend:
+          service:
+            name: rabbitmqcluster
+            port:
+              number: 15672
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - r.k8s-do.exmple.live
+    secretName: letsencrypt-prod-rabbit-managment-ui
