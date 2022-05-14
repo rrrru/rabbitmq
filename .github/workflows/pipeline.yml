@@ -21,7 +21,10 @@ jobs:
           doctl kubernetes cluster kubeconfig save ${{ secrets.DO_CLUSTER_NAME }}
           kubectl version
           helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm upgrade -i rabbitmq-cluster-operator bitnami/rabbitmq-cluster-operator --create-namespace
+          helm upgrade -i rabbitmq-cluster-operator bitnami/rabbitmq-cluster-operator \
+           --version 2.6.1 \
+           --namespace rabbitmq \
+           --create-namespace
           kubectl create ns ${{ secrets.K8S_NAMESPACE }} || true
           kubectl apply -f rabbitmq-cluster.yml -n ${{ secrets.K8S_NAMESPACE }}
           kubectl apply -f ingress.yml -n ${{ secrets.K8S_NAMESPACE }}
